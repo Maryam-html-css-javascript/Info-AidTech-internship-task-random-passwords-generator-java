@@ -1,0 +1,91 @@
+import java.security.SecureRandom;
+import java.util.Scanner;
+
+public class EnhancedRandomPasswordGenerator {
+    private static final String LOWERCASE = "abcdefghijkmnpqrstuvwxyz";
+    private static final String UPPERCASE = "ABCDEFGHJKLMNPQRSTUVWXYZ";
+    private static final String DIGITS = "23456789";
+    private static final String SYMBOLS = "!@#$%^&*()-_=+[]{}|;:,.<>?";
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+           printStartingMessage();
+
+        do {
+            int length = getUserInput(scanner, "Enter desired password length: ");
+            boolean useUppercase = getUserPreference(scanner, "Include uppercase letters? (y/n): ");
+            boolean useLowercase = getUserPreference(scanner, "Include lowercase letters? (y/n): ");
+            boolean useSymbols = getUserPreference(scanner, "Include symbols? (y/n): ");
+            boolean useDigits = getUserPreference(scanner, "Include digits? (y/n): ");
+
+            String password = generateRandomPassword(length, useUppercase, useLowercase, useSymbols, useDigits);
+            System.out.println("Generated Password: " + password);
+
+            String feedback = getUserFeedback(scanner);
+            System.out.println("Feedback: " + feedback);
+
+            System.out.print("Do you want to generate another password? (y/n): ");
+            String response = scanner.next();
+            if (!response.equalsIgnoreCase("y")) {
+               printFarewellMessage();
+                break;
+            }
+        } while (true);
+
+        scanner.close();
+    }
+    
+     public static void printStartingMessage() {
+        System.out.println("Welcome to the Enhanced Random Password Generator!");
+        System.out.println("This tool allows you to create customized random passwords.");
+        System.out.println("Let's get started...");
+        System.out.println();
+    }
+
+    public static void printFarewellMessage() {
+        System.out.println();
+        System.out.println("Thank you for using the Enhanced Random Password Generator!");
+        System.out.println("Stay secure and have a great day!");
+    }
+
+
+    public static int getUserInput(Scanner scanner, String prompt) {
+        System.out.print(prompt);
+        return scanner.nextInt();
+    }
+
+    public static boolean getUserPreference(Scanner scanner, String prompt) {
+        System.out.print(prompt);
+        String response = scanner.next();
+        return response.equalsIgnoreCase("y");
+    }
+
+    public static String generateRandomPassword(int length, boolean useUppercase, boolean useLowercase,
+                                                boolean useSymbols, boolean useDigits) {
+        if (!useUppercase && !useLowercase && !useSymbols && !useDigits) {
+            throw new IllegalArgumentException("At least one character set must be selected.");
+        }
+
+        String characters = "";
+        if (useUppercase) characters += UPPERCASE;
+        if (useLowercase) characters += LOWERCASE;
+        if (useSymbols) characters += SYMBOLS;
+        if (useDigits) characters += DIGITS;
+
+        StringBuilder password = new StringBuilder();
+        SecureRandom random = new SecureRandom();
+
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(characters.length());
+            password.append(characters.charAt(index));
+        }
+
+        return password.toString();
+    }
+
+    public static String getUserFeedback(Scanner scanner) {
+        System.out.print("Please provide feedback about the generated password: ");
+        scanner.nextLine(); // Consume newline
+        return scanner.nextLine();
+    }
+}
